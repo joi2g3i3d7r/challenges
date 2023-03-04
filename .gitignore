@@ -6,3 +6,7 @@ obj
 node_modules
 package-lock.json
 dist
+
+# Java
+*.class
+

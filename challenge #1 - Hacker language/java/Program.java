@@ -1,11 +1,44 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class Program {
   public static void main(String[] args) {
-    String textTranslated = translateText("Hello world, 123");
+    Path path = Paths.get("../text.txt");
+    String inputText = "";
 
-    System.out.println(textTranslated);
+    try {
+      inputText = String.join("\n", Files.readAllLines(path));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    ResultTranslation resultTranslation = translateTextProfiling(inputText);
+
+    System.out.println("result: " + resultTranslation.textTranslated);
+    System.out.println("Total execution time: " + resultTranslation.duration + " milliseconds");
+  }
+
+  static class ResultTranslation {
+    public String textTranslated;
+    public long duration;
+  }
+
+  private static ResultTranslation translateTextProfiling(final String inputText) {
+    long startTime = System.nanoTime();
+    String textTranslated = translateText(inputText);
+    long endTime = System.nanoTime();
+    long totalTime = endTime - startTime;
+
+    ResultTranslation resultTranslation = new ResultTranslation();
+    resultTranslation.textTranslated = textTranslated;
+    resultTranslation.duration = TimeUnit.NANOSECONDS.toMillis(totalTime);
+
+    return resultTranslation;
   }
 
   private static String translateText(String inputText) {
